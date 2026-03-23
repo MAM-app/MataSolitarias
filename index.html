@@ -47,11 +47,48 @@
             background: #334155;
             border-radius: 10px;
         }
+
+        /* Capa de Bloqueo */
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+        .hidden-app {
+            filter: blur(20px);
+            pointer-events: none;
+            user-select: none;
+        }
     </style>
 </head>
 <body class="bg-slate-950 font-sans text-slate-200">
 
-    <div class="max-w-2xl mx-auto p-4 md:p-8">
+    <!-- Pantalla de Seguridad -->
+    <div id="lock-screen">
+        <div class="max-w-sm w-full p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl text-center">
+            <div class="text-4xl mb-4">🔐</div>
+            <h2 class="text-white font-black uppercase tracking-tighter mb-2 italic text-xl">Acceso Restringido</h2>
+            <p class="text-slate-500 text-[10px] uppercase font-bold mb-6 tracking-widest">Protocolo de Seguridad Bio-Kill</p>
+            
+            <input type="password" id="pass-input" placeholder="CONTRASEÑA" 
+                class="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-4 text-center text-lime-400 font-mono tracking-widest focus:outline-none focus:border-lime-400 mb-4">
+            
+            <button onclick="checkAccess()" 
+                class="w-full bg-lime-400 hover:bg-lime-500 text-slate-950 font-black py-3 rounded-xl uppercase tracking-widest transition-all text-xs">
+                Desbloquear Monitor
+            </button>
+            <p id="error-msg" class="text-red-500 text-[10px] font-bold mt-4 uppercase hidden">Acceso Denegado</p>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div id="main-app" class="max-w-2xl mx-auto p-4 md:p-8 hidden-app">
         <!-- Header -->
         <header class="mb-6 flex justify-between items-center">
             <div>
@@ -159,10 +196,43 @@
 
         <footer class="mt-8 flex justify-center gap-6">
              <button onclick="resetAll()" class="text-[9px] font-black text-slate-700 hover:text-red-500 uppercase tracking-widest transition-colors duration-500">Reiniciar Todo</button>
+             <button onclick="lockAgain()" class="text-[9px] font-black text-slate-700 hover:text-cyan-500 uppercase tracking-widest transition-colors duration-500">Bloquear Monitor</button>
         </footer>
     </div>
 
     <script>
+        // CONFIGURACIÓN DE SEGURIDAD
+        const SECRET_PASS = "1234"; // CAMBIA ESTO PARA TU REPOSITORIO PRIVADO
+
+        function checkAccess() {
+            const input = document.getElementById('pass-input').value;
+            const error = document.getElementById('error-msg');
+            const screen = document.getElementById('lock-screen');
+            const app = document.getElementById('main-app');
+
+            if (input === SECRET_PASS) {
+                screen.style.opacity = "0";
+                setTimeout(() => {
+                    screen.style.display = "none";
+                    app.classList.remove('hidden-app');
+                }, 500);
+            } else {
+                error.classList.remove('hidden');
+                document.getElementById('pass-input').value = "";
+                setTimeout(() => error.classList.add('hidden'), 2000);
+            }
+        }
+
+        // Permitir Enter para entrar
+        document.getElementById('pass-input')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkAccess();
+        });
+
+        function lockAgain() {
+            location.reload();
+        }
+
+        // LÓGICA DEL MONITOR
         let treatmentData = Array(5).fill().map(() => [false, false, false]);
         let currentDay = 1;
 
