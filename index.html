@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Maestro de Recuperación - Protocolo Optimizado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .progress-glow {
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .day-tab {
+            transition: all 0.2s ease;
+        }
+        .day-tab.active {
+            background-color: #a3e635; /* Lime 400 */
+            color: #064e3b; /* Dark Green */
+            box-shadow: 0 4px 10px -1px rgba(163, 230, 53, 0.4);
+        }
+        .dose-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dose-card:active {
+            transform: scale(0.97);
+        }
+        .check-icon {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans text-slate-200">
+
+    <div class="max-w-2xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black text-white tracking-tight uppercase italic">Protocolo <span class="text-lime-400">Bio-Kill</span></h1>
+                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Eficacia Máxima: Horarios Optimizados</p>
+            </div>
+            <div class="text-right">
+                <span id="total-progress-badge" class="bg-lime-900/20 text-lime-400 text-[10px] font-black px-2 py-1 rounded-md border border-lime-800/50">
+                    BARRIDO: 0%
+                </span>
+            </div>
+        </header>
+
+        <!-- Selector de Días -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="day-selector">
+            <button onclick="changeDay(1)" id="tab-1" class="day-tab active flex-1 min-w-[70px] py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400">DÍA 1</button>
+            <button onclick="changeDay(2)" id="tab-2" class="day-tab flex-1 min-w-[70px] py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400">DÍA 2</button>
+            <button onclick="changeDay(3)" id="tab-3" class="day-tab flex-1 min-w-[70px] py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400">DÍA 3</button>
+            <button onclick="changeDay(4)" id="tab-4" class="day-tab flex-1 min-w-[70px] py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400">DÍA 4</button>
+            <button onclick="changeDay(5)" id="tab-5" class="day-tab flex-1 min-w-[70px] py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400">DÍA 5</button>
+        </div>
+
+        <!-- Panel de Gestión del Día -->
+        <div class="bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-800 mb-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 id="current-day-title" class="text-xl font-bold text-white uppercase tracking-tight">Gestión del Día</h2>
+                    <p class="text-xs text-slate-500">Ciclo de 8 horas (Sin tomas de madrugada)</p>
+                </div>
+                <div class="text-right">
+                    <span id="day-status" class="text-[10px] font-black text-teal-400 uppercase tracking-tighter">Pendiente</span>
+                </div>
+            </div>
+
+            <!-- Grid de Dosis -->
+            <div class="grid grid-cols-1 gap-4">
+                <!-- Dosis Mañana -->
+                <div onclick="toggleDose(0)" id="dose-0" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/30 hover:border-teal-500/30 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700">☀️</div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mañana</p>
+                            <p class="font-bold text-slate-100 uppercase text-sm">Toma 07:00 AM</p>
+                        </div>
+                    </div>
+                    <div id="check-0" class="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center check-icon"></div>
+                </div>
+
+                <!-- Dosis Tarde -->
+                <div onclick="toggleDose(1)" id="dose-1" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/30 hover:border-teal-500/30 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700">⛅</div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tarde</p>
+                            <p class="font-bold text-slate-100 uppercase text-sm">Toma 03:00 PM</p>
+                        </div>
+                    </div>
+                    <div id="check-1" class="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center check-icon"></div>
+                </div>
+
+                <!-- Dosis Noche -->
+                <div onclick="toggleDose(2)" id="dose-2" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/30 hover:border-teal-500/30 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700">🌑</div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Noche</p>
+                            <p class="font-bold text-slate-100 uppercase text-sm">Toma 11:00 PM</p>
+                        </div>
+                    </div>
+                    <div id="check-2" class="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center check-icon"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitor Global -->
+        <div class="bg-slate-900 rounded-3xl p-6 shadow-2xl relative overflow-hidden mb-6 border border-slate-800">
+            <div class="relative z-10">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h3 class="text-lime-400 font-black text-[10px] uppercase tracking-[0.2em] mb-1">Impacto Bioquímico</h3>
+                        <p id="system-status" class="text-white font-bold text-lg tracking-tight">Cargando...</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-slate-500 text-[10px] font-bold uppercase">Ciclos</p>
+                        <p id="hits-count" class="text-white font-mono text-xl font-black">0 / 15</p>
+                    </div>
+                </div>
+
+                <div class="w-full bg-slate-800 h-2.5 rounded-full mb-4 overflow-hidden border border-slate-700">
+                    <div id="total-bar" class="bg-gradient-to-r from-teal-500 to-lime-400 h-full progress-glow" style="width: 0%"></div>
+                </div>
+
+                <p id="bio-insight" class="text-xs text-slate-400 leading-relaxed italic bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
+                    Calculando degradación del escólex basada en tomas confirmadas.
+                </p>
+            </div>
+        </div>
+
+        <!-- Notas de Salud -->
+        <div id="health-notes" class="bg-teal-950/20 border border-teal-900/30 p-4 rounded-2xl flex items-start gap-4">
+            <div class="text-xl">💪</div>
+            <div>
+                <h4 class="text-teal-400 font-bold text-xs uppercase mb-1 tracking-widest">Estado del Huésped:</h4>
+                <p id="note-text" class="text-xs text-slate-400 leading-relaxed">...</p>
+            </div>
+        </div>
+
+        <footer class="mt-8 flex justify-center gap-6">
+             <button onclick="resetAll()" class="text-[9px] font-black text-slate-700 hover:text-red-500 uppercase tracking-widest transition-colors">Formatear Protocolo</button>
+        </footer>
+    </div>
+
+    <script>
+        let treatmentData = Array(5).fill().map(() => [false, false, false]);
+        let currentDay = 1;
+
+        const healthNotes = {
+            1: "Ataque inicial. El parásito recibe la primera carga. Mantén hidratación alta.",
+            2: "Debilitamiento mecánico. Es el mejor momento para evitar alimentos pesados.",
+            3: "Fase crítica. La adherencia del parásito es mínima. Posible alivio de hinchazón.",
+            4: "Barrido de seguridad. El sistema inmunológico retoma el control del intestino.",
+            5: "Consolidación. Últimas dosis para asegurar que no queden formas resistentes."
+        };
+
+        const systemStatuses = [
+            "Escólex Intacto",
+            "Aturdimiento",
+            "Desprendimiento",
+            "Muerte Celular",
+            "Fase de Purga",
+            "SISTEMA LIMPIO"
+        ];
+
+        function changeDay(day) {
+            currentDay = day;
+            renderDay();
+        }
+
+        function toggleDose(doseIndex) {
+            treatmentData[currentDay-1][doseIndex] = !treatmentData[currentDay-1][doseIndex];
+            renderDay();
+        }
+
+        function renderDay() {
+            document.querySelectorAll('.day-tab').forEach((tab, index) => {
+                const day = index + 1;
+                tab.classList.toggle('active', day === currentDay);
+                const isDayDone = treatmentData[index].every(d => d);
+                tab.innerHTML = isDayDone ? `DÍA ${day} ✓` : `DÍA ${day}`;
+            });
+
+            document.getElementById('current-day-title').innerText = `Gestión del Día ${currentDay}`;
+            document.getElementById('note-text').innerText = healthNotes[currentDay];
+
+            const dayDoses = treatmentData[currentDay-1];
+            dayDoses.forEach((isDone, index) => {
+                const card = document.getElementById(`dose-${index}`);
+                const check = document.getElementById(`check-${index}`);
+                
+                if(isDone) {
+                    card.classList.remove('border-slate-800', 'bg-slate-800/30');
+                    card.classList.add('border-lime-500/50', 'bg-lime-900/10');
+                    check.innerHTML = '✓';
+                    check.classList.remove('border-slate-700', 'border-teal-500');
+                    check.classList.add('bg-lime-400', 'border-lime-400', 'text-slate-900');
+                    check.style.transform = 'scale(1.1) rotate(0deg)';
+                } else {
+                    card.classList.add('border-slate-800', 'bg-slate-800/30');
+                    card.classList.remove('border-lime-500/50', 'bg-lime-900/10');
+                    check.innerHTML = '';
+                    check.classList.remove('bg-lime-400', 'border-lime-400', 'text-slate-900');
+                    check.classList.add('border-teal-500/50');
+                    check.style.transform = 'scale(1) rotate(-45deg)';
+                }
+            });
+
+            calculateGlobalProgress();
+        }
+
+        function calculateGlobalProgress() {
+            const flatData = treatmentData.flat();
+            const totalHits = flatData.filter(d => d).length;
+            const progressPercent = Math.round((totalHits / 15) * 100);
+
+            document.getElementById('total-bar').style.width = `${progressPercent}%`;
+            document.getElementById('hits-count').innerText = `${totalHits} / 15`;
+            document.getElementById('total-progress-badge').innerText = `BARRIDO: ${progressPercent}%`;
+
+            const statusIndex = Math.min(Math.floor(totalHits / 3), 5);
+            document.getElementById('system-status').innerText = systemStatuses[statusIndex];
+
+            let insight = "";
+            if(totalHits < 3) insight = "Detección activa. El parásito sigue aferrado. No omitas la siguiente toma.";
+            else if(totalHits < 9) insight = "Protocolo efectivo. El ADN del invasor se está degradando rápidamente.";
+            else if(totalHits < 15) insight = "Eliminación inminente. El escólex ha perdido sus ventosas de anclaje.";
+            else insight = "OPERACIÓN EXITOSA. El intestino ha recuperado su soberanía biológica.";
+            
+            document.getElementById('bio-insight').innerText = insight;
+        }
+
+        function resetAll() {
+            if(confirm("¿Reiniciar el registro completo de 5 días?")) {
+                treatmentData = Array(5).fill().map(() => [false, false, false]);
+                currentDay = 1;
+                renderDay();
+            }
+        }
+
+        window.onload = () => {
+            treatmentData[0][0] = true; // Dosis de las 11am marcada (o la primera del nuevo ciclo)
+            renderDay();
+        };
+    </script>
+</body>
+</html>
