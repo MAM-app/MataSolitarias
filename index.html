@@ -27,6 +27,15 @@
         .check-icon {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        /* Animación personalizada para compatibilidad total */
+        @keyframes custom-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+        .bicho-pulse {
+            animation: custom-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            display: inline-block;
+        }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             height: 4px;
@@ -46,8 +55,8 @@
         <!-- Header -->
         <header class="mb-6 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black text-white tracking-tight uppercase italic">Protocolo <span class="text-lime-400">Bio-Kill</span></h1>
-                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Eficacia Máxima: Horarios Optimizados</p>
+                <h1 class="text-2xl font-black text-white tracking-tight uppercase italic text-cyan-400">Protocolo <span class="text-lime-400">Bio-Kill</span></h1>
+                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase italic">Ajuste de Horario: Modo Descanso Activado</p>
             </div>
             <div class="text-right">
                 <span id="total-progress-badge" class="bg-lime-900/20 text-lime-400 text-[10px] font-black px-2 py-1 rounded-md border border-lime-800/50">
@@ -70,49 +79,47 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h2 id="current-day-title" class="text-xl font-bold text-white uppercase tracking-tight">Gestión del Día</h2>
-                    <p class="text-xs text-slate-500">Ciclo de 8 horas (Sin tomas de madrugada)</p>
+                    <p class="text-xs text-slate-500">Horarios: 07:00 | 15:00 | 23:00</p>
                 </div>
-                <div class="text-right">
-                    <span id="day-status" class="text-[10px] font-black text-teal-400 uppercase tracking-tighter">Pendiente</span>
-                </div>
+                <div id="day-completion" class="text-[10px] font-black text-teal-400 uppercase tracking-tighter bg-teal-900/20 px-2 py-1 rounded-lg">Pendiente</div>
             </div>
 
             <!-- Grid de Dosis -->
             <div class="grid grid-cols-1 gap-4">
                 <!-- Dosis Mañana -->
-                <div onclick="toggleDose(0)" id="dose-0" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/30 hover:border-teal-500/30 transition-all">
+                <div onclick="toggleDose(0)" id="dose-0" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/20 transition-all hover:bg-slate-800/40">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700">☀️</div>
+                        <div id="icon-0" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700 text-teal-400">☀️</div>
                         <div>
                             <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mañana</p>
                             <p class="font-bold text-slate-100 uppercase text-sm">Toma 07:00 AM</p>
                         </div>
                     </div>
-                    <div id="check-0" class="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center check-icon"></div>
+                    <div id="check-0" class="w-8 h-8 rounded-full border-2 border-teal-500/30 flex items-center justify-center check-icon"></div>
                 </div>
 
                 <!-- Dosis Tarde -->
-                <div onclick="toggleDose(1)" id="dose-1" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/30 hover:border-teal-500/30 transition-all">
+                <div onclick="toggleDose(1)" id="dose-1" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/20 transition-all hover:bg-slate-800/40">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700">⛅</div>
+                        <div id="icon-1" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700 text-teal-400">⛅</div>
                         <div>
                             <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tarde</p>
                             <p class="font-bold text-slate-100 uppercase text-sm">Toma 03:00 PM</p>
                         </div>
                     </div>
-                    <div id="check-1" class="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center check-icon"></div>
+                    <div id="check-1" class="w-8 h-8 rounded-full border-2 border-teal-500/30 flex items-center justify-center check-icon"></div>
                 </div>
 
                 <!-- Dosis Noche -->
-                <div onclick="toggleDose(2)" id="dose-2" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/30 hover:border-teal-500/30 transition-all">
+                <div onclick="toggleDose(2)" id="dose-2" class="dose-card flex items-center justify-between p-5 rounded-2xl border-2 border-slate-800 cursor-pointer bg-slate-800/20 transition-all hover:bg-slate-800/40">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700">🌑</div>
+                        <div id="icon-2" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner text-xl border border-slate-700 text-teal-400">🌑</div>
                         <div>
                             <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Noche</p>
                             <p class="font-bold text-slate-100 uppercase text-sm">Toma 11:00 PM</p>
                         </div>
                     </div>
-                    <div id="check-2" class="w-8 h-8 rounded-full border-2 border-slate-700 flex items-center justify-center check-icon"></div>
+                    <div id="check-2" class="w-8 h-8 rounded-full border-2 border-teal-500/30 flex items-center justify-center check-icon"></div>
                 </div>
             </div>
         </div>
@@ -123,35 +130,35 @@
                 <div class="flex justify-between items-end mb-4">
                     <div>
                         <h3 class="text-lime-400 font-black text-[10px] uppercase tracking-[0.2em] mb-1">Impacto Bioquímico</h3>
-                        <p id="system-status" class="text-white font-bold text-lg tracking-tight">Cargando...</p>
+                        <p id="system-status" class="text-white font-bold text-lg tracking-tight uppercase">Escólex Activo</p>
                     </div>
                     <div class="text-right">
                         <p class="text-slate-500 text-[10px] font-bold uppercase">Ciclos</p>
-                        <p id="hits-count" class="text-white font-mono text-xl font-black">0 / 15</p>
+                        <p id="hits-count" class="text-white font-mono text-xl font-black tracking-tighter">0 / 15</p>
                     </div>
                 </div>
 
-                <div class="w-full bg-slate-800 h-2.5 rounded-full mb-4 overflow-hidden border border-slate-700">
-                    <div id="total-bar" class="bg-gradient-to-r from-teal-500 to-lime-400 h-full progress-glow" style="width: 0%"></div>
+                <div class="w-full bg-slate-800 h-3 rounded-full mb-4 overflow-hidden border border-slate-700 p-0.5">
+                    <div id="total-bar" class="bg-gradient-to-r from-teal-500 to-lime-400 h-full rounded-full progress-glow" style="width: 0%"></div>
                 </div>
 
-                <p id="bio-insight" class="text-xs text-slate-400 leading-relaxed italic bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
-                    Calculando degradación del escólex basada en tomas confirmadas.
+                <p id="bio-insight" class="text-[11px] text-slate-400 leading-relaxed italic bg-slate-950/40 p-3 rounded-xl border border-slate-800/50">
+                    Analizando resistencia parasitaria...
                 </p>
             </div>
         </div>
 
         <!-- Notas de Salud -->
-        <div id="health-notes" class="bg-teal-950/20 border border-teal-900/30 p-4 rounded-2xl flex items-start gap-4">
-            <div class="text-xl">💪</div>
+        <div id="health-notes" class="bg-teal-900/10 border border-teal-800/30 p-4 rounded-2xl flex items-center gap-4">
+            <div class="text-2xl bicho-pulse">🦠</div>
             <div>
-                <h4 class="text-teal-400 font-bold text-xs uppercase mb-1 tracking-widest">Estado del Huésped:</h4>
-                <p id="note-text" class="text-xs text-slate-400 leading-relaxed">...</p>
+                <h4 class="text-teal-400 font-bold text-[10px] uppercase mb-0.5 tracking-widest">Estado Biológico:</h4>
+                <p id="note-text" class="text-xs text-slate-400 leading-tight italic font-medium">...</p>
             </div>
         </div>
 
         <footer class="mt-8 flex justify-center gap-6">
-             <button onclick="resetAll()" class="text-[9px] font-black text-slate-700 hover:text-red-500 uppercase tracking-widest transition-colors">Formatear Protocolo</button>
+             <button onclick="resetAll()" class="text-[9px] font-black text-slate-700 hover:text-red-500 uppercase tracking-widest transition-colors duration-500">Reiniciar Todo</button>
         </footer>
     </div>
 
@@ -160,18 +167,18 @@
         let currentDay = 1;
 
         const healthNotes = {
-            1: "Ataque inicial. El parásito recibe la primera carga. Mantén hidratación alta.",
-            2: "Debilitamiento mecánico. Es el mejor momento para evitar alimentos pesados.",
-            3: "Fase crítica. La adherencia del parásito es mínima. Posible alivio de hinchazón.",
-            4: "Barrido de seguridad. El sistema inmunológico retoma el control del intestino.",
-            5: "Consolidación. Últimas dosis para asegurar que no queden formas resistentes."
+            1: "Aturdimiento inicial. La Tenia está recibiendo las primeras moléculas tóxicas.",
+            2: "Fallo de anclaje. Sus ventosas musculares pierden fuerza de agarre.",
+            3: "Fase crítica. Desprendimiento inminente del escólex. No detengas el ataque.",
+            4: "Degradación. Tu sistema digestivo empieza a procesar los restos orgánicos.",
+            5: "Soberanía total. El tracto intestinal está libre de invasores. Barrido final."
         };
 
         const systemStatuses = [
-            "Escólex Intacto",
-            "Aturdimiento",
+            "Resistencia Alta",
+            "Aturdimiento N1",
+            "Aturdimiento N2",
             "Desprendimiento",
-            "Muerte Celular",
             "Fase de Purga",
             "SISTEMA LIMPIO"
         ];
@@ -198,26 +205,35 @@
             document.getElementById('note-text').innerText = healthNotes[currentDay];
 
             const dayDoses = treatmentData[currentDay-1];
+            let doneInDay = 0;
             dayDoses.forEach((isDone, index) => {
                 const card = document.getElementById(`dose-${index}`);
                 const check = document.getElementById(`check-${index}`);
+                const icon = document.getElementById(`icon-${index}`);
                 
                 if(isDone) {
-                    card.classList.remove('border-slate-800', 'bg-slate-800/30');
-                    card.classList.add('border-lime-500/50', 'bg-lime-900/10');
+                    doneInDay++;
+                    card.classList.remove('border-slate-800', 'bg-slate-800/20');
+                    card.classList.add('border-lime-500/60', 'bg-lime-900/10');
                     check.innerHTML = '✓';
-                    check.classList.remove('border-slate-700', 'border-teal-500');
-                    check.classList.add('bg-lime-400', 'border-lime-400', 'text-slate-900');
-                    check.style.transform = 'scale(1.1) rotate(0deg)';
+                    check.classList.remove('border-teal-500/30');
+                    check.classList.add('bg-lime-400', 'border-lime-400', 'text-slate-900', 'font-bold');
+                    icon.classList.remove('text-teal-400');
+                    icon.classList.add('text-lime-400');
                 } else {
-                    card.classList.add('border-slate-800', 'bg-slate-800/30');
-                    card.classList.remove('border-lime-500/50', 'bg-lime-900/10');
+                    card.classList.add('border-slate-800', 'bg-slate-800/20');
+                    card.classList.remove('border-lime-500/60', 'bg-lime-900/10');
                     check.innerHTML = '';
                     check.classList.remove('bg-lime-400', 'border-lime-400', 'text-slate-900');
-                    check.classList.add('border-teal-500/50');
-                    check.style.transform = 'scale(1) rotate(-45deg)';
+                    check.classList.add('border-teal-500/30');
+                    icon.classList.add('text-teal-400');
+                    icon.classList.remove('text-lime-400');
                 }
             });
+
+            document.getElementById('day-completion').innerText = doneInDay === 3 ? "Completado ✓" : "En Progreso";
+            document.getElementById('day-completion').classList.toggle('text-lime-400', doneInDay === 3);
+            document.getElementById('day-completion').classList.toggle('text-teal-400', doneInDay !== 3);
 
             calculateGlobalProgress();
         }
@@ -244,7 +260,7 @@
         }
 
         function resetAll() {
-            if(confirm("¿Reiniciar el registro completo de 5 días?")) {
+            if(confirm("¿Reiniciar el protocolo de 5 días?")) {
                 treatmentData = Array(5).fill().map(() => [false, false, false]);
                 currentDay = 1;
                 renderDay();
@@ -252,7 +268,7 @@
         }
 
         window.onload = () => {
-            treatmentData[0][0] = true; // Dosis de las 11am marcada (o la primera del nuevo ciclo)
+            treatmentData[0][0] = true;
             renderDay();
         };
     </script>
